@@ -3,3 +3,8 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .idea/
+
+# Local dev workspace (generator, evaluation, tests, third-party data
+# importers) -- kept on disk for continued development, intentionally
+# not part of this repo. See README.md "Scope of this repo".
+PaddlePad/
