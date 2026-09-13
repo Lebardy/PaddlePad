@@ -28,13 +28,41 @@ aggregate_player_profiles(raw_match_logs)
     -> build_skill_model(player_profiles)
     -> create_ml_features / prepare_for_ml / scale_ml_features
     -> prepare_clustering_data -> test_skill_k_values -> cluster_skill_groups
-    -> interpret_skill_clusters -> apply_skill_cluster_labels
+    -> merge in rally_points, then interpret_skill_clusters(rank_by="rally_points")
+    -> apply_skill_cluster_labels
     -> create_playstyle_features
     -> merge in skill_group/skill_score, then residualize_playstyle_features
     -> prepare_playstyle_features -> scale_playstyle_features
     -> test_playstyle_k_values -> cluster_playstyles
     -> interpret_playstyle_clusters -> apply_playstyle_archetypes
 ```
+
+## Which number does what
+
+Two numbers describe a player's skill, and they have separate jobs.
+
+- **K-Means sees neither.** The skill groups are found from the
+  behavioural features alone, so who is grouped with whom never depends
+  on a score.
+- **`rally_points` names the skill groups.** It is the app's rally
+  rating: every rally moves a player's points by how it ended and who
+  ended it, Elo-style. The group whose players average the most points
+  is named the higher group. It comes from the app, not from these
+  files, and is merged in by player id before
+  `interpret_skill_clusters`.
+- **`skill_score` takes skill out of the playstyle features.**
+  `residualize_playstyle_features` still removes its effect before the
+  second K-Means, exactly as before.
+
+Why the names moved to rally points: on a synthetic pool of 50 players
+with a hidden true ability, group numbers ranked by rally points
+followed that ability closely (Spearman 0.81 over ten K-Means random
+starts); ranked by `skill_score` they barely did (0.17). Nobody changed
+group, and playstyles were unaffected. That is one synthetic pool, so
+it should be checked again on real matches.
+
+Called without `rank_by`, `interpret_skill_clusters` still ranks by
+`skill_score`, so these files run on their own.
 
 ## Scope of this repo
 
