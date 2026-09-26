@@ -13,7 +13,8 @@ player.
 - `feature_engineering.py` - builds the skill and playstyle feature
   sets, including `residualize_playstyle_features` (removes skill's
   influence from playstyle features so archetypes aren't just skill
-  in disguise), and extract_playstyle_components, the PCA step before the second K-Means.
+  in disguise), and `extract_playstyle_components`, the PCA step
+  before the second K-Means.
 - `clustering.py` - the two-level K-Means (skill groups, then
   playstyle archetypes within each group) and the archetype-naming
   logic.
